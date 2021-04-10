@@ -30,6 +30,8 @@ public class Framework
 	
 	private static class Help extends MenuItem
 	{
+		private static final String SEPARATION = "////////////////////////////////\n";
+		
 		private final List<MenuItem> items;
 		private final String additionalDescription;
 		
@@ -49,7 +51,11 @@ public class Framework
 		@Override
 		public String doAction()
 		{
-			StringBuilder builder = new StringBuilder(additionalDescription + '\n');
+			StringBuilder builder = new StringBuilder();
+			
+			builder.append(SEPARATION);
+			
+			builder.append(additionalDescription).append('\n');
 			
 			builder.append(getAccessCommand()).append(' ').append(getDescription()).append('\n');
 			
@@ -57,6 +63,8 @@ public class Framework
 			{
 				builder.append(i.toString()).append('\n');
 			}
+			
+			builder.append(SEPARATION);
 			
 			return builder.toString();
 		}
@@ -103,16 +111,13 @@ public class Framework
 		menuItems.put(tem.getAccessCommand(), tem);
 	}
 	
-	@SafeVarargs
-	public <T extends MenuItem> Framework(Class<T>... menuItems) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
+	public Framework(MenuItem... menuItems) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 	{
 		this.menuItems = new HashMap<>();
 		
-		for (Class<T> i : menuItems)
+		for (MenuItem i : menuItems)
 		{
-			MenuItem menuItem = i.getConstructor().newInstance();
-			
-			this.menuItems.put(menuItem.getAccessCommand(), menuItem);
+			this.menuItems.put(i.getAccessCommand(), i);
 		}
 		
 		this.addStandardMenuItems();
